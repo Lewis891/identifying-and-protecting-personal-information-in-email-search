@@ -1,0 +1,52 @@
+{% extends "personal_classifier\base.html" %}
+
+{% block main %}
+    <div class="body-text"> 
+        <h1>{{ email.File }}</h1>
+        <div class="detail-info"> 
+            {% if email.preds_rf == "Personal" %} 
+                <h3>This email has been identified as <span Style="color: #8FFF00">Personal</span></h3>
+            {% else %}
+                <h3>This email has been identified as <span Style="color: #8FFF00">Not personal</span></h3>
+            {% endif %}
+            <hr>
+            <p>To:</p>
+            <p>{{ email.To }}</p>
+            <hr>
+            <p>From:</p>
+            <p>{{ email.From }}</p>
+            <hr>
+            {{ features_list|json_script:"feature_list"  }}
+            {{ topic_list|json_script:"topics_list"  }}
+            {{ email_body|linebreaks|json_script:"body"  }}
+            <p>Body:</p>
+            <div id="result">
+                <p>{{ email_body|linebreaks }}</p>
+            </div>
+            <button class="button" id="highlight-button" onclick="highlight()">Highlight</button>
+            <button class="button" id="highlight-button" onclick="unHighlight()">Un-Highlight</button>
+            <hr>
+            {% if email.ManualClassify != " " %}
+                <p>This email has been maually identified as: {{ email.ManualClassify }}</p>
+                <p>The reason for this is: {{ email.ManualReason }}</p>
+            {% endif %}
+
+        <div class="detail-form">
+        <form action="?" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <label for="IsPersonal">Is this email personal?</label>
+            <select name="IsPersonal" id="IsPersonal">
+                <option value="Personal">Yes</option>
+                <option value="Not Personal">No</option>
+                <option value="Unsure">Unsure</option>
+            </select>
+            <p>Why is this email personal?</p>
+            <textarea rows="4" cols="40" name="reason"></textarea>
+            <br>
+            <input class="button" type="submit">
+        </form>
+        </div>
+        </div>
+    </div>
+{% endblock %}

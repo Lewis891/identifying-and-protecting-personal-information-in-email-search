@@ -1,0 +1,259 @@
+{% extends "personal_classifier\base.html" %}
+
+{% block main %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <div class="body-text">    
+        <h1>Graph page</h1>
+        <br>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <h3>Number of personal emails in the collection:</h3>
+                    <canvas id="No_of_personal_chart" width="25px" heigh="25px"></canvas>
+                </div>
+                <div class="col-lg-9">
+                    <h3>Number of personal emails from sender:</h3>
+                    <canvas id="From_Chart"></canvas>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-lg-6">
+                    <canvas id="Feature_importance"></canvas>
+                </div>
+                <div class="col-lg-6">
+                    <p style="text-align:center;margin-top:10%;">This graph represents the importance that the classifier gave to each feature
+                        to help determine if an email is considered personal. i.e. an email that 
+                        contains 'love' has a bigger chance to be personal than an email that does not
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="detail-form">
+                    <form action="?" method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <label for="topic_1">Select a topic to view: </label>
+                        <select name="topic_1" id="topic_1">
+                            <option value="customers">customers</option>
+                            <option value="federal business">federal business</option>
+                            <option value="week">week</option>
+                            <option value="federal customers">federal customers</option>
+                            <option value="public">public</option>
+                            <option value="pay">pay</option>
+                            <option value="bill">bill</option>
+                            <option value="crisis">crisis</option>
+                            <option value="federal">federal</option>
+                            <option value="times">times</option>
+                        </select>    
+                        <input class="button" type="submit">   
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3>Topic {{ topic_1 }} features</h3>
+                    <canvas id="topic_1_importance"></canvas>
+                </div>
+                <div class="col-lg-6">
+                    <p style="text-align:center;margin-top:20%;">This graph represents the importance that the Topic Model gave to each feature
+                        of a topic, to help determine what topic belongs to each email. i.e. an email that 
+                        contains customers has a bigger chance to be in the customers topic than an email that does not
+                    </p>
+                </div>
+                <br>
+            </div>
+        </div>
+
+        <script>
+        const ctx = document.getElementById('No_of_personal_chart');
+        Chart.defaults.color = '#ffffff';
+        
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+            labels: {{ no_of_personal_labels|safe }},
+            datasets: [{
+                label: '# of Votes',
+                data: {{ no_of_personal|safe }},
+                backgroundColor: ['#8FFF00', '#ffffff'],
+                borderWidth: 1,
+                borderColor: "black",
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=&From=&Body=&preds_rf=" + chart.data.labels[i] + "&topic=";
+                }
+            }
+        }
+        });
+
+        const ctx_2 = document.getElementById('From_Chart');
+
+        new Chart(ctx_2, {
+            type: 'bar',
+            data: {
+            labels: {{ From_addresses|safe }},
+            datasets: [{
+                label: '# of personal emails sent',
+                data: {{ no_of_emails_from|safe }},
+                borderWidth: 1,
+                backgroundColor: '#8FFF00',
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 10,
+                        stepSize: 1,
+                        beginAtZero: true
+                    }
+                }]
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=&From=" + chart.data.labels[i] + "&Body=&preds_rf=&topic=";
+                }
+            }
+        }
+        });
+
+        const ctx_3 = document.getElementById('Feature_importance');
+
+        new Chart(ctx_3, {
+            type: 'bar',
+            data: {
+            labels: {{ feature_names|safe }},
+            datasets: [{
+                label: 'importance of feature',
+                data: {{ coefficients|safe }},
+                borderWidth: 1,
+                backgroundColor: '#8FFF00',
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        stepSize: 1,
+                        beginAtZero: true
+                    }
+                }]
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=&From=&Body=" +chart.data.labels[i] + "&preds_rf=&topic=";
+                }
+            }
+        }
+        });
+
+        const ctx_4 = document.getElementById('topic_1_importance');
+
+        new Chart(ctx_4, {
+            type: 'bar',
+            data: {
+            labels: {{ topic_0_words|safe }},
+            datasets: [{
+                label: 'importance of feature',
+                data: {{ topic_0_imps|safe }},
+                borderWidth: 1,
+                backgroundColor: '#8FFF00',
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        stepSize: 1,
+                        beginAtZero: true
+                    }
+                }]
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=&From=&Body=" +chart.data.labels[i] + "&preds_rf=&topic=";
+                }
+            }
+        }
+        });
+        </script>
+        
+    </div>
+{% endblock %}

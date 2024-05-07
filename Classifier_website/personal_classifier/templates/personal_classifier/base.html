@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        {% block title %}<title>Personal Classifier</title>{% endblock %}
+        <meta charset="utf-8">
+        {% load static %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com/%22%3E">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <script src="{% static 'java_functions.js' %}"></script>
+    </head>
+
+    <body>
+        {% block navbar %}
+        <nav>
+            <div class="container-fluid">
+                <div class="col-lg-2">
+                    <div class="navbar-logo">
+                        <a href="{% url 'personal_classifier:index' %}">Email Classifier</a>
+                    </div>
+                </div>
+                <div class="col-lg-10">
+                <div class="list">
+                <ul class="navigation-bar">
+                    <li><a href="{% url 'personal_classifier:index' %}">Index</a></li>
+                    <li><a href="{% url 'personal_classifier:upload_collection' %}">Upload</a></li>
+                    <li><a href="{% url 'personal_classifier:search_collection' %}">Search</a></li>
+                    <li><a href="{% url 'personal_classifier:graph_collection' %}">Graphs</a></li>
+                </ul>
+                </div>
+                </div>
+            </div>
+        </nav>
+        {% endblock %}
+        <div style="margin-top:50px">
+            {% block main %}
+            
+            {% endblock %}
+        </div>
+    </body>
+
+</html>

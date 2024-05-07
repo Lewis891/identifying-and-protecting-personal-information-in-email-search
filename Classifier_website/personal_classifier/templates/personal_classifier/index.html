@@ -1,0 +1,64 @@
+{% extends "personal_classifier\base.html" %}
+
+{% block main %}  
+    {% load static %}
+    <body class="index_body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="welcome">
+                <h1>Making email sorting <span Style="color: #8FFF00">easier.</span></h1>
+                <p>The Email Classifier scans and highlights emails that contain <span Style="color: #8FFF00">personal information</span>
+                    before plublication to the internet.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="Index-Information">
+                <h1>Classifier Details</h1>
+                <p>
+                    The email collection that is uploaded is passed through a Random Forest 
+                    classifier. This website will let you look at this classification in detail 
+                    and allow you to determine what is safe for publication to the internet.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="Index-about">
+                <h1>Upload</h1>
+                <hr>
+                <p>
+                    Pass your collection through the classifier and store 
+                    the information to the webapp database.
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="Index-about">
+                <h1>Search</h1>
+                <hr>
+                <p>
+                    See which emails are considered personal and provide your own
+                    input on which emails you find personal.
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="Index-about">
+                <h1>Graphs</h1>
+                <hr>
+                <p>
+                    View graphs to see more details of the classification and the email
+                    collection.
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </body>
+{% endblock %}

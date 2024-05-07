@@ -1,0 +1,17 @@
+{% extends "personal_classifier\base.html" %}
+
+{% block main %}
+    <div class="body-text">
+    <div class="container-fluid">
+        <h1>Upload page</h1>
+    </div>
+    <div class="container-fluid">
+        <form class="upload-form" action="{% url 'personal_classifier:upload_collection' %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="Submit" name="submit" value="Submit"/>
+            <input type="Submit" name="Update database" value="Update"/>
+        </form>
+    </div>
+    </div>
+{% endblock %}

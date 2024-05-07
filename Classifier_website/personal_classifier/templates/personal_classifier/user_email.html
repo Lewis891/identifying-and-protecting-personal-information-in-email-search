@@ -1,0 +1,217 @@
+{% extends "personal_classifier\base.html" %}
+
+{% block main %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <div class="body-text"> 
+        <h1>{{ user }}</h1>
+        {{ user|json_script:"user" }}
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <h3>Emails sent: </h3>
+                    <canvas id="emails_sent"></canvas>
+                </div>
+                <div class="col-lg-3">
+                </div>
+                <div class="col-lg-3">
+                    <h3>Emails recieved:</h3>
+                    <canvas id="emails_recieved"></canvas>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3>Emails sent: </h3>
+                    <canvas id="personal_sent"></canvas>
+                </div>
+                <div class="col-lg-6">
+                    <h3>Emails recieved:</h3>
+                    <canvas id="personal_recieved"></canvas>
+                </div>
+            </div>
+            <br>
+            <div class="detail-info">
+                <button class="button-user" id="view_sent_emails" onclick="sent_emails()">View emails sent from user</button>
+                <button class="button-user" id="view_recieved_emails" onclick="recieved_emails()">View emails recieved from user</button>
+            </div>
+        </div>
+        <script>
+        var user = JSON.parse(document.getElementById('user').textContent)
+
+        function sent_emails() {
+            var user = JSON.parse(document.getElementById('user').textContent)
+            location.href = "http://localhost:8000/personal_classifier/search/?File=&To=&From=" + user + "&Body=&preds_rf=&topic=";
+          }
+
+        function recieved_emails() {
+            var user = JSON.parse(document.getElementById('user').textContent)
+            location.href = "http://localhost:8000/personal_classifier/search/?File=&To=" + user + "&From=&Body=&preds_rf=&topic=";
+          }
+
+        const ctx = document.getElementById('emails_sent');
+        Chart.defaults.color = '#ffffff';
+        
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+            labels: ['Personal','Non-personal'],
+            datasets: [{
+                label: '# of Votes',
+                data: {{ sent|safe }},
+                backgroundColor: ['#8FFF00', '#ffffff'],
+                borderWidth: 1,
+                borderColor: "black",
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=&From=" + user + "&Body=&preds_rf=" + chart.data.labels[i] + "&topic=";
+                }
+            }
+        }
+        });
+
+        const ctx_2 = document.getElementById('emails_recieved');
+        
+        new Chart(ctx_2, {
+            type: 'pie',
+            data: {
+            labels: ['Personal','Non-personal'],
+            datasets: [{
+                label: '# of Votes',
+                data: {{ recieved|safe }},
+                backgroundColor: ['#8FFF00', '#ffffff'],
+                borderWidth: 1,
+                borderColor: "black",
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=" + user + "&From=&Body=&preds_rf=" + chart.data.labels[i] + "&topic=";
+                }
+            }
+        }
+        });
+
+        const ctx_3 = document.getElementById('personal_sent');
+
+        new Chart(ctx_3, {
+            type: 'bar',
+            data: {
+            labels: {{ sent_addresses|safe }},
+            datasets: [{
+                label: '# of personal emails sent',
+                data: {{ no_sent_to|safe }},
+                borderWidth: 1,
+                backgroundColor: '#8FFF00',
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 10,
+                        stepSize: 1,
+                        beginAtZero: true
+                    }
+                }]
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=" + chart.data.labels[i] + "&From=" + user + "&Body=&preds_rf=Personal&topic=";
+                }
+            }
+        }
+        });
+        
+        const ctx_4 = document.getElementById('personal_recieved');
+
+        new Chart(ctx_4, {
+            type: 'bar',
+            data: {
+            labels: {{ from_addresses|safe }},
+            datasets: [{
+                label: '# of personal emails recieved',
+                data: {{ no_from|safe }},
+                borderWidth: 1,
+                backgroundColor: '#8FFF00',
+            }]
+            },
+            options: { 
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 14
+                }
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 14,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    gridLines: {
+                        color:"white",
+                    },
+                    ticks: {
+                        fontColor: "white",
+                        fontSize: 10,
+                        stepSize: 1,
+                        beginAtZero: true
+                    }
+                }]
+            },
+            onClick: (event, elements, chart) => {
+                if (elements[0]) {            
+                    const i = elements[0].index;
+                    location.href = "http://localhost:8000/personal_classifier/search/?File=&To=" + user + "&From=" + chart.data.labels[i] + "&Body=&preds_rf=Personal&topic=";
+                }
+            }
+        }
+        });
+        </script>
+    </div>
+{% endblock %}
